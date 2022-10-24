@@ -1,13 +1,17 @@
 import React, {useState, useEffect} from 'react';
+import { useNavigate } from 'react-router-dom'
 import styles from './NewProject.module.css'
 import Input from '../Forms/Input'
 import Select from '../Forms/Select'
 import SubmitButton from '../Forms/SubmitButton'
 
-const ProjectForms = ({ btnText }) => {
+
+const ProjectForms = ({ handleSubmit, btnText, projectData }) => {
 
     /* Usando o hook useState para obter os dados da api json via fetch*/
     const [categories, setCategories] = useState([])
+    /* Usando o hook useSatate para preencher os dados do formulario, passados via paerametro */
+    const [project, setProject] = useState(projectData || {})
 
     /* Usando o hook useEffect para fazer a requisição via fetch, e preencher o hook setCategories com o retorno da api */
     useEffect(()=> {
@@ -23,24 +27,57 @@ const ProjectForms = ({ btnText }) => {
           setCategories(data)
       })  
       .catch((err) => console.log(err)) /*Tratamento de erros, retornado da api. */
-  }, [])  
+    }, [])  
+
+    /* Função que vai submeter os dados do formulario para dentro da função handleSubmt do componente pai. */
+    const submit = (e) =>{
+       e.preventDefault() 
+       //console.log(project)
+       handleSubmit(project)
+    }
+
+    const handleChange = (e) => {
+        setProject({ ...project, [e.target.name]: e.target.value })
+        console.log(project)
+    }
+
+    const handleCategory = (e) => {
+        setProject({ 
+            ...project, 
+            category: {
+                id: e.target.value,
+                name: e.target.options[e.target.selectedIndex].text,
+            },
+        })
+        console.log(project)
+    }
 
   return (
     <div>
-    	<form className={styles.form} >
+    	<form onSubmit={submit} className={styles.form} >
     		<Input 
                 type="text" 
                 text="Nome do Projeto"
                 name="name"
                 placeholder="insira o nome do projeto"
+                handleOnChange={handleChange}
+                value={project.name ? project.value : '' }
             />
     		<Input 
                 type="number" 
                 text="Orçamento do projeto"
                 name="budjet"
                 placeholder="Insira o orçamento total"
+                handleOnChange={handleChange}
+                value={project.budjet ? project.budjet : '' } 
             />
-    		<Select name="category_id" text="Selecione a categoria" options={categories} /> 
+    		<Select 
+                name="category_id" 
+                text="Selecione a categoria" 
+                options={categories}
+                handleOnChange={handleCategory}
+                value={project.category ? project.category.id: ''} 
+            /> 
             <SubmitButton text={btnText} />
     	</form>
     	
