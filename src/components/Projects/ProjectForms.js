@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import { useNavigate } from 'react-router-dom'
 import styles from './NewProject.module.css'
 import Input from '../Forms/Input'
 import Select from '../Forms/Select'
