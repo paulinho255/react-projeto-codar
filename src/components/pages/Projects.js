@@ -5,9 +5,11 @@ import styles from './Projects.module.css'
 import Container from '../layout/Container'
 import LinkButton from '../layout/LinkButton'
 import ProjectCard from '../Projects/ProjectCard'
+import Loader from '../layout/Loader'
 
 function Projects() {
 	const [projects, setProjects] = useState([])
+	const [removeLoading, setRremoveLoading] = useState(false)
 
 	/* Componente Projects.js para apresentação das mensagens e edição dos projetos criados em newproject.js */
 	const location = useLocation()
@@ -17,17 +19,21 @@ function Projects() {
 	}
 
 	useEffect(() => {
-		fetch('http://localhost:5000/projects',{
-			method: 'GET',
-			headers: {
-				'Content-type': 'application/json'
-			},
-		}).then((resp) => resp.json())
-		.then((data) => 
-			{
-				setProjects(data)
-			})
-		.catch((err) => console.log(err))	
+		setTimeout(() => {
+			fetch('http://localhost:5000/projects',{
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json'
+				},
+			}).then((resp) => resp.json())
+			.then((data) => 
+				{
+					setProjects(data)
+					setRremoveLoading(true)
+				})
+			.catch((err) => console.log(err))	
+		},1000)
+
 	}, [])
 
 	return (
@@ -40,14 +46,19 @@ function Projects() {
 			<Container customClass="start" >
 				{projects.length > 0 && projects.map((project) => (
 					<ProjectCard id={project.id} 
-								 name={project.name} 
-								 budjet={project.budjet} 
-								 category={project.category.name} 
-								 key={project.id} />
-					))}
+						name={project.name} 
+						budjet={project.budjet} 
+						category={project.category.name} 
+						key={project.id} />
+						))}
+				{!removeLoading && <Loader/>}
+				{removeLoading && projects.length === 0 && (
+					<p>Não ha projetos cadastrados.</p>
+					)}
 			</Container>
 			</div>
-			)
-	}
 
-	export default Projects
+			)
+}
+
+export default Projects
