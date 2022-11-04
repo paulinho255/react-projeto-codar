@@ -60,7 +60,7 @@ const ProjectForms = ({ handleSubmit, btnText, projectData }) => {
                 name="name"
                 placeholder="insira o nome do projeto"
                 handleOnChange={handleChange}
-                value={project.name ? project.value : '' }
+                value={project.name ? project.name : '' }
             />
     		<Input 
                 type="number" 
